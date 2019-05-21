@@ -1,0 +1,16 @@
+{
+  "name": "learning-nodejs-from-scratch",
+  "version": "1.0.0",
+  "description": "Learning Node.js from scratch",
+  "main": "app.js",
+  "dependencies": {
+    "nodemon": "^1.19.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js"
+  },
+  "author": "Mohamed AKRAICH",
+  "license": "ISC"
+}
