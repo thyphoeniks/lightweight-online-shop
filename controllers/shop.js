@@ -2,34 +2,46 @@ const Product = require("../models/product");
 const Cart = require("../models/cart");
 
 exports.getProducts = (req, res, next) => {
-  Product.fetchAll(products => {
-    res.render("shop/product-list", {
-      prods: products,
-      pageTitle: "All products",
-      path: "/products"
+  Product.fetchAll()
+    .then(([products]) => {
+      res.render("shop/product-list", {
+        prods: products,
+        pageTitle: "All products",
+        path: "/products"
+      });
+    })
+    .catch(err => {
+      console.log(err);
     });
-  });
 };
 
 exports.getProduct = (req, res, next) => {
   const productId = req.params.productId;
-  Product.findById(productId, product => {
-    res.render("shop/product-details", {
-      product: product,
-      pageTitle: "Product Details",
-      path: "/products"
+  Product.findById(productId)
+    .then(([product]) => {
+      res.render("shop/product-details", {
+        product: product[0],
+        pageTitle: "Product Details",
+        path: "/products"
+      });
+    })
+    .catch(err => {
+      console.log(err);
     });
-  });
 };
 
 exports.getIndex = (req, res, next) => {
-  Product.fetchAll(products => {
-    res.render("shop/index", {
-      prods: products,
-      pageTitle: "My shop",
-      path: "/"
+  Product.fetchAll()
+    .then(([products]) => {
+      res.render("shop/index", {
+        prods: products,
+        pageTitle: "My shop",
+        path: "/"
+      });
+    })
+    .catch(err => {
+      console.log(err);
     });
-  });
 };
 
 exports.getCart = (req, res, next) => {
