@@ -6,6 +6,7 @@ const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
 
 const errorController = require("./controllers/error");
+const sequelize = require("./util/database");
 
 const app = express();
 
@@ -19,5 +20,14 @@ app.use("/admin", adminRoutes);
 app.use(shopRoutes);
 
 app.use(errorController.get404);
+
+sequelize
+  .sync()
+  .then(result => {
+    console.log("Successfuly connected to the database!");
+  })
+  .catch(err => {
+    console.log(err);
+  });
 
 app.listen(3000);
