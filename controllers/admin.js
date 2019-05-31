@@ -1,3 +1,4 @@
+const mongodb = require("mongodb");
 const Product = require("../models/product");
 
 exports.getAddProduct = (req, res, next) => {
@@ -9,8 +10,7 @@ exports.getAddProduct = (req, res, next) => {
 };
 
 exports.getProducts = (req, res, next) => {
-  req.user
-    .getProducts()
+  Product.fetchAll()
     .then(products => {
       res.render("admin/products", {
         prods: products,
@@ -23,30 +23,11 @@ exports.getProducts = (req, res, next) => {
     });
 };
 
-exports.postDeleteProduct = (req, res, next) => {
-  const prodId = req.body.productId;
-  Product.findByPk(prodId)
-    .then(product => {
-      return product.destroy();
-    })
-    .then(() => {
-      console.log("Product Destroyed!");
-      res.redirect("/admin/products");
-    })
-    .catch(err => {
-      console.log(err);
-    });
-};
-
 exports.postAddProduct = (req, res, next) => {
-  const { title, imageUrl, price, description } = req.body;
-  req.user
-    .createProduct({
-      title: title,
-      price: price,
-      imageUrl: imageUrl,
-      description: description
-    })
+  const { title, price, description, imageUrl } = req.body;
+  const product = new Product(title, price, description, imageUrl);
+  product
+    .save()
     .then(() => {
       console.log("Product Created");
       res.redirect("/");
@@ -62,10 +43,8 @@ exports.getEditProduct = (req, res, next) => {
     return res.redirect("/");
   }
   const prodId = req.params.productId;
-  req.user
-    .getProducts({ where: { id: prodId } })
-    .then(products => {
-      product = products[0];
+  Product.findById(prodId)
+    .then(product => {
       if (!product) {
         return res.redirect("/");
       }
@@ -84,14 +63,20 @@ exports.getEditProduct = (req, res, next) => {
 exports.postEditProduct = (req, res, next) => {
   const id = req.body.productId;
   const { title, imageUrl, price, description } = req.body;
-  Product.findByPk(id)
-    .then(product => {
-      product.title = title;
-      product.imageUrl = imageUrl;
-      product.price = price;
-      product.description = description;
-      return product.save();
+  const product = new Product(title, price, description, imageUrl, id);
+  product
+    .save()
+    .then(() => {
+      res.redirect("/admin/products");
     })
+    .catch(err => {
+      console.log(err);
+    });
+};
+
+exports.postDeleteProduct = (req, res, next) => {
+  const prodId = req.body.productId;
+  Product.deleteById(prodId)
     .then(() => {
       res.redirect("/admin/products");
     })
