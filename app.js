@@ -2,6 +2,8 @@ const path = require("path");
 const express = require("express");
 const bodyParser = require("body-parser");
 
+const User = require("./models/user");
+
 const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
 
@@ -15,6 +17,23 @@ app.set("views", "views");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
+
+app.use((req, res, next) => {
+  User.findById("5cf4eb0d40fc322214438f77")
+    .then(user => {
+      let cart;
+      if (user.cart) {
+        cart = user.cart;
+      } else {
+        cart = { items: [] };
+      }
+      req.user = new User(user.username, user.email, cart, user._id);
+      next();
+    })
+    .catch(err => {
+      console.log(err);
+    });
+});
 
 app.use("/admin", adminRoutes);
 app.use(shopRoutes);
