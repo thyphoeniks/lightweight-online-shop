@@ -73,37 +73,18 @@ exports.postCart = (req, res, next) => {
       console.log(err);
     });
 };
-/*
+
 exports.postOrder = (req, res, next) => {
-  let fetchedCart;
-  let cartProducts;
   req.user
-    .getCart()
-    .then(cart => {
-      fetchedCart = cart;
-      return cart.getProducts();
-    })
-    .then(products => {
-      cartProducts = products;
-      return req.user.createOrder();
-    })
-    .then(order => {
-      return order.addProducts(
-        cartProducts.map(product => {
-          product.orderItem = { quantity: product.cartItem.quantity };
-          return product;
-        })
-      );
-    })
-    .then(result => {
-      fetchedCart.setProducts(null);
+    .addOrder()
+    .then(() => {
       res.redirect("/orders");
     })
     .catch(err => {
       console.log(err);
     });
 };
-*/
+
 exports.postCartDeleteProduct = (req, res, next) => {
   const prodId = req.body.productId;
   req.user
@@ -115,10 +96,10 @@ exports.postCartDeleteProduct = (req, res, next) => {
       console.log(err);
     });
 };
-/*
+
 exports.getOrders = (req, res, next) => {
   req.user
-    .getOrders({ include: ["products"] })
+    .getOrders()
     .then(orders => {
       res.render("shop/orders", {
         pageTitle: "Orders",
@@ -130,4 +111,3 @@ exports.getOrders = (req, res, next) => {
       console.log(err);
     });
 };
-*/
